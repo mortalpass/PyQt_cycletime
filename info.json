@@ -1,11 +1,11 @@
 {
   "metadata_dict": {
     "Test Name": "Restore Loop Test",
-    "Test Date": "2025-09-08",
+    "Test Date": "2025-09-13",
     "Tester": "Nino",
     "Number of Workstations": "1",
     "DUT per Workstation": "1",
-    "Loops per DUT": "61",
+    "Loops per DUT": "152",
     "Restore Tool Version": "PurpleRabbit",
     "Remark": "NULL"
   },
@@ -15,8 +15,8 @@
     "DUT Model": "Zonda (P1BU) 48GB_2T",
     "Variant": "Factory-Software Download",
     "Bundle Version": "CheerEAmber25E40601c",
-    "Loop #": "19",
-    "Restore Status": "0/19T",
-    "Folder Name": "/Users/sw-team/Desktop/0910/"
+    "Loop #": "152",
+    "Restore Status": "0/152T",
+    "Folder Name": "/Users/sw-team/Desktop/Logs/"
   }
 }

@@ -149,7 +149,7 @@ class LogProcessor:
             # 非重要索引 - 只处理CSV文件
             for src_path in group:
                 if src_path.suffix.lower() == '.csv':
-                    new_name = f"{index:03d}_{timestamp}_{src_path.name}"
+                    new_name = f"{index:03d}_{src_path.name}"
                     dest_path = output_dir / new_name
                     try:
                         shutil.copy2(src_path, dest_path)

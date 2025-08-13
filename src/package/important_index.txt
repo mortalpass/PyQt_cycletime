@@ -1,7 +1,8 @@
 WS-1:min:52
 WS-1:max:2
-WS-1:median:59
+WS-1:median:8
 WS-1:abnormal:2
 WS-1:abnormal:5
 WS-1:abnormal:36
+WS-1:abnormal:46
 WS-1:abnormal:52
