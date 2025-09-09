@@ -1,4 +1,7 @@
-WS-3:min:2
-WS-3:max:9
-WS-3:median:6
-WS-3:abnormal:9
+WS-2:min:10
+WS-2:max:3
+WS-2:median:66
+WS-2:abnormal:3
+WS-2:abnormal:10
+WS-2:abnormal:71
+WS-2:abnormal:72

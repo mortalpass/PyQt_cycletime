@@ -384,6 +384,11 @@ class ScriptRunnerThread(QThread):
     def run(self):
         """主运行方法"""
         try:
+            # 清空 extracted_data 文件夹
+            extracted_dir = Path("extracted_data")
+            if extracted_dir.exists():
+                shutil.rmtree(extracted_dir)
+            extracted_dir.mkdir(parents=True, exist_ok=True)
             # 加载工作站信息
             info_path = "info.json"
             if not os.path.exists(info_path):

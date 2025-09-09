@@ -64,6 +64,25 @@ class BoxPlotGenerator:
             logger.error(f"加载工作站数据时出错: {e}")
             return {}
 
+    def load_all_data_from_json(self) -> Dict[str, List[float]]:
+        """从JSON文件加载所有工作站数据"""
+        # 加载提取的数据
+        data_dir = Path("extracted_data")
+        json_file = data_dir / f"all_restore_times.json"
+        try:
+            if not Path(json_file).exists():
+                logger.error(f"找不到数据文件: {json_file}")
+                return {}
+
+            with open(json_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            return data
+
+        except Exception as e:
+            logger.error(f"从JSON文件加载数据时出错: {e}")
+            return {}
+
     def calculate_statistics(self, data: List[float]) -> Dict[str, float]:
         """计算数据的统计信息"""
         if not data:
@@ -216,18 +235,31 @@ class BoxPlotGenerator:
         self.single_boxplot_paths.append(str(filename))  # 保存单数据集箱线图路径
         return filename
 
-    def create_multi_boxplot(self, all_data: Dict[str, List[float]]):
-        """为多个工作站创建箱线图"""
+    def create_multi_boxplot(self):
+        """为多个工作站创建箱线图（从JSON文件读取数据）"""
+        # 从JSON文件加载所有数据
+        all_data = self.load_all_data_from_json()
+
         if not all_data:
             logger.warning("没有数据可用，跳过箱线图创建")
             return None
 
         # 准备数据
-        data_list = list(all_data.values())
-        workstation_names = list(all_data.keys())
+        data_list = []
+        workstation_names = []
+
+        # 遍历所有数据，确保只包含有数据的条目
+        for name, data in all_data.items():
+            if data:  # 只添加有数据的条目
+                data_list.append(data)
+                workstation_names.append(name)
+
+        if len(data_list) < 2:
+            logger.warning("少于2个数据集，跳过多数据集箱线图创建")
+            return None
 
         # 创建图表
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(max(12, len(data_list) * 2), 6))
         ax = sns.boxplot(data=data_list, color='skyblue')
 
         plt.title("Multiple Restore Time Distributions", fontsize=14, fontweight='bold')
@@ -238,10 +270,7 @@ class BoxPlotGenerator:
         ax.set_xticklabels(workstation_names, rotation=45, ha='right')
 
         # 为每个数据集处理异常点和中位数点
-        for i, (workstation_name, data) in enumerate(all_data.items()):
-            if not data:
-                continue
-
+        for i, (workstation_name, data) in enumerate([(name, data) for name, data in all_data.items() if data]):
             # 计算统计信息
             stats = self.calculate_statistics(data)
             outliers = self.find_extreme_indices(data, stats['lower_bound'], stats['upper_bound'])
@@ -322,7 +351,7 @@ class BoxPlotGenerator:
         except Exception as e:
             logger.error(f"更新metadata.json时出错: {e}")
 
-    def generate_boxplots(self):
+    def generate_boxplots(self, multi_plot: bool = True):
         """生成箱线图"""
         # 清空已保存的索引集合
         self.saved_indices.clear()
@@ -343,6 +372,12 @@ class BoxPlotGenerator:
             boxplot_file = self.create_single_boxplot(workstation_name, data)
             if boxplot_file:
                 boxplot_files.append(boxplot_file)
+
+        # 创建多数据集箱线图（从JSON文件读取数据）
+        if multi_plot:
+            multi_boxplot_file = self.create_multi_boxplot()
+            if multi_boxplot_file:
+                boxplot_files.append(multi_boxplot_file)
 
         # 所有图表生成完毕后，更新metadata.json
         self.update_metadata_json()

@@ -3,13 +3,35 @@
     "Test Name": "Restore Loop Test",
     "Test Date": "2025-08-15 00:00:00",
     "Tester": "William",
-    "Number of Workstations": "3",
+    "Number of Workstations": "2",
     "DUT per Workstation": "1",
     "Loops per DUT": "19",
     "Restore Tool Version": "PurpleRabbit",
     "Remark": "NULL"
   },
   "WS-1": {
+    "Host Info": "J274_14.4.1_16G_256G",
+    "Cable Info": "Spartan-FW: 1.11.3",
+    "DUT Model": "Zonda (P1BU) 48GB_2T",
+    "Variant": "Factory-Software Download",
+    "Bundle Version": "CheerEAmber25E40600u",
+    "Loop #": "19",
+    "Restore Status": "0/19T",
+    "Folder Name": "/Users/sw-team/Desktop/Logs/",
+    "Median Times(s)": "2646.57",
+    "Avg Time(s)": "2651.87",
+    "Min Time(s)": "2639.50",
+    "Max Time(s)": "2765.56",
+    "Range(s)": "126.06",
+    "Std(s)": "23.54",
+    "Outlier Count": "2",
+    "Remark": "Outliers determined by boxplot method (Q1-1.5IQR, Q3+1.5IQR); Min at loops: 26; Max at loops: 1",
+    "path": {
+      "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_line_chart.png",
+      "boxplot": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_boxplot.png"
+    }
+  },
+  "WS-2": {
     "Host Info": "J274_14.4.1_16G_256G",
     "Cable Info": "Spartan-FW: 1.11.3",
     "DUT Model": "Zonda (P1BU) 48GB_2T",
@@ -27,52 +49,8 @@
     "Outlier Count": "4",
     "Remark": "Outliers determined by boxplot method (Q1-1.5IQR, Q3+1.5IQR); Min at loops: 10; Max at loops: 3",
     "path": {
-      "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_line_chart.png",
-      "boxplot": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_boxplot.png"
-    }
-  },
-  "WS-2": {
-    "Host Info": "J274_14.4.1_16G_256G",
-    "Cable Info": "Spartan-FW: 1.11.3",
-    "DUT Model": "Zonda (P1BU) 48GB_2T",
-    "Variant": "Factory-Software Download",
-    "Bundle Version": "CheerEAmber25E40600u",
-    "Loop #": "19",
-    "Restore Status": "0/19T",
-    "Folder Name": "/Users/sw-team/Desktop/0816/logs_0u/",
-    "Median Times(s)": "2642.52",
-    "Avg Time(s)": "2642.56",
-    "Min Time(s)": "2634.91",
-    "Max Time(s)": "2647.66",
-    "Range(s)": "12.75",
-    "Std(s)": "3.05",
-    "Outlier Count": "1",
-    "Remark": "Outliers determined by boxplot method (Q1-1.5IQR, Q3+1.5IQR); Min at loops: 11; Max at loops: 12",
-    "path": {
       "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-2_line_chart.png",
       "boxplot": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-2_boxplot.png"
-    }
-  },
-  "WS-3": {
-    "Host Info": "J274_14.4.1_16G_256G",
-    "Cable Info": "Spartan-FW: 1.11.3",
-    "DUT Model": "Zonda (P1BU) 48GB_2T",
-    "Variant": "Factory-Software Download",
-    "Bundle Version": "CheerEAmber25E40600u",
-    "Loop #": "19",
-    "Restore Status": "0/19T",
-    "Folder Name": "/Users/sw-team/Desktop/0816/logs_0v/",
-    "Median Times(s)": "2644.05",
-    "Avg Time(s)": "2645.43",
-    "Min Time(s)": "2638.32",
-    "Max Time(s)": "2660.56",
-    "Range(s)": "22.24",
-    "Std(s)": "5.38",
-    "Outlier Count": "1",
-    "Remark": "Outliers determined by boxplot method (Q1-1.5IQR, Q3+1.5IQR); Min at loops: 2; Max at loops: 9",
-    "path": {
-      "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-3_line_chart.png",
-      "boxplot": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-3_boxplot.png"
     }
   },
   "note": "Outliers are determined based on the boxplot method, where a data point is considered an outlier if it is greater than Q3 + 1.5×IQR or less than Q1 - 1.5×IQR.",
