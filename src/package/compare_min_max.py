@@ -2,8 +2,6 @@ import pandas as pd
 import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
-import re
-import os
 
 # 配置日志
 logging.basicConfig(

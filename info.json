@@ -1,11 +1,11 @@
 {
   "metadata_dict": {
     "Test Name": "Restore Loop Test",
-    "Test Date": "2025-08-15",
-    "Tester": "William",
+    "Test Date": "2025-09-08",
+    "Tester": "Nino",
     "Number of Workstations": "1",
     "DUT per Workstation": "1",
-    "Loops per DUT": "19",
+    "Loops per DUT": "61",
     "Restore Tool Version": "PurpleRabbit",
     "Remark": "NULL"
   },
@@ -14,9 +14,29 @@
     "Cable Info": "Spartan-FW: 1.11.3",
     "DUT Model": "Zonda (P1BU) 48GB_2T",
     "Variant": "Factory-Software Download",
+    "Bundle Version": "CheerEAmber25E40601c",
+    "Loop #": "19",
+    "Restore Status": "0/19T",
+    "Folder Name": "/Users/sw-team/Desktop/0910/"
+  },
+  "WS-2": {
+    "Host Info": "J274_14.4.1_16G_256G",
+    "Cable Info": "Spartan-FW: 1.11.3",
+    "DUT Model": "Zonda (P1BU) 48GB_2T",
+    "Variant": "Factory-Software Download",
     "Bundle Version": "CheerEAmber25E40600u",
     "Loop #": "19",
     "Restore Status": "0/19T",
-    "Folder Name": "/Users/sw-team/Desktop/Logs/"
+    "Folder Name": "logs_0u"
+  },
+  "WS-3": {
+    "Host Info": "J274_14.4.1_16G_256G",
+    "Cable Info": "Spartan-FW: 1.11.3",
+    "DUT Model": "Zonda (P1BU) 48GB_2T",
+    "Variant": "Factory-Software Download",
+    "Bundle Version": "CheerEAmber25E40600u",
+    "Loop #": "19",
+    "Restore Status": "0/19T",
+    "Folder Name": "logs_0u"
   }
 }

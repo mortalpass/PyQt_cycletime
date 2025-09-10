@@ -245,9 +245,19 @@ class JSONEditorWindow(QDialog):
 
     def reset_data(self):
         """重置数据到原始状态"""
-        self.data = json.loads(json.dumps(self.original_data))
-        self.populate_metadata()
-        self.populate_workstations()
+        reply = QMessageBox.question(
+            self,
+            "确认重置",
+            "确定要重置所有更改吗？此操作将丢失所有未保存的修改。",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            self.data = json.loads(json.dumps(self.original_data))
+            self.populate_metadata()
+            self.populate_workstations()
+            QMessageBox.information(self, "重置成功", "数据已成功重置到原始状态。")
 
     def save_data(self):
         """保存数据到JSON文件"""
@@ -283,13 +293,7 @@ class JSONEditorWindow(QDialog):
             if old_num_workstations != new_num_workstations:
                 self.populate_workstations()
 
-            # 生成metadata.json
-            metadata_success = self.generate_metadata()
-
-            if metadata_success:
-                QMessageBox.information(self, "成功", "数据已成功保存并生成metadata.json！")
-            else:
-                QMessageBox.warning(self, "警告", "数据已保存，但生成metadata.json时出现问题。")
+            QMessageBox.information(self, "保存成功", "数据已成功保存到文件。")
 
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存数据失败: {str(e)}")

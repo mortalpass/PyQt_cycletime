@@ -1,12 +1,11 @@
 from pathlib import Path
-from typing import List, Optional, Union, Dict
+from typing import List, Optional
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.utils import get_column_letter
 import logging
 import json
-import os
 
 # 配置日志
 logging.basicConfig(
