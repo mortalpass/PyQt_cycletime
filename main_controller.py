@@ -249,35 +249,6 @@ class JSONEditorWindow(QDialog):
         self.populate_metadata()
         self.populate_workstations()
 
-    def generate_metadata(self):
-        """生成metadata.json文件"""
-        try:
-            # 构建generate_metadata.py脚本的完整路径
-            generate_script = os.path.join(self.script_dir, "generate_metadata.py")
-
-            # 运行generate_metadata.py脚本
-            result = subprocess.run(
-                [sys.executable, generate_script],
-                capture_output=True,
-                text=True,
-                timeout=30,
-                cwd=os.getcwd()  # 在工作目录下运行
-            )
-
-            if result.returncode == 0:
-                logger.info("成功生成metadata.json")
-                return True
-            else:
-                logger.error(f"生成metadata.json失败: {result.stderr}")
-                return False
-
-        except subprocess.TimeoutExpired:
-            logger.error("生成metadata.json超时")
-            return False
-        except Exception as e:
-            logger.error(f"生成metadata.json时发生异常: {str(e)}")
-            return False
-
     def save_data(self):
         """保存数据到JSON文件"""
         # 更新元数据
@@ -333,6 +304,7 @@ class ScriptRunnerThread(QThread):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.scripts = [
+            ("生成metadata.json", "generate_metadata.py"),
             ("提取循环时间数据", "getCycleTime.py"),
             ("生成折线图", "lineChart.py"),
             ("生成箱线图", "boxPlot.py"),
@@ -385,10 +357,16 @@ class ScriptRunnerThread(QThread):
         """主运行方法"""
         try:
             # 清空 extracted_data 文件夹
-            extracted_dir = Path("extracted_data")
+            extracted_dir = Path("src/package/extracted_data")
             if extracted_dir.exists():
                 shutil.rmtree(extracted_dir)
             extracted_dir.mkdir(parents=True, exist_ok=True)
+
+            data_dir = Path("data")
+            if data_dir.exists():
+                shutil.rmtree(data_dir)
+            data_dir.mkdir(parents=True, exist_ok=True)
+
             # 加载工作站信息
             info_path = "info.json"
             if not os.path.exists(info_path):
@@ -406,8 +384,6 @@ class ScriptRunnerThread(QThread):
 
             total_workstations = len(ws_keys)
             total_steps = len(self.scripts) * total_workstations
-
-            current_step = 0
 
             # 为每个工作站执行所有脚本
             for ws_index, ws_key in enumerate(ws_keys):
@@ -530,7 +506,8 @@ class MainControllerWindow(QMainWindow):
         """执行脚本序列"""
         # 检查脚本文件是否存在
         missing_scripts = []
-        scripts = ["getCycleTime.py", "lineChart.py", "boxPlot.py", "sortCycletime.py", "compare_min_max.py",
+        scripts = ["generate_metadata.py", "getCycleTime.py", "lineChart.py", "boxPlot.py", "sortCycletime.py",
+                   "compare_min_max.py",
                    "forExcel.py"]
 
         for script in scripts:

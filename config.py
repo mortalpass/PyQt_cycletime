@@ -3,6 +3,7 @@ import os
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 LOG_BASE = os.path.join(PROJECT_ROOT, 'data', 'input')
 OUTPUT_BASE = os.path.join(PROJECT_ROOT, 'data', 'output')
+# OUTPUT_BASE = "/Users/sw-team/Desktop/data"
 
 output_log = os.path.join(OUTPUT_BASE, 'sort_logs')
 

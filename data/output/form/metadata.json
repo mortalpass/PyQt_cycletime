@@ -3,7 +3,7 @@
     "Test Name": "Restore Loop Test",
     "Test Date": "2025-08-15 00:00:00",
     "Tester": "William",
-    "Number of Workstations": "2",
+    "Number of Workstations": "1",
     "DUT per Workstation": "1",
     "Loops per DUT": "19",
     "Restore Tool Version": "PurpleRabbit",
@@ -29,28 +29,6 @@
     "path": {
       "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_line_chart.png",
       "boxplot": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_boxplot.png"
-    }
-  },
-  "WS-2": {
-    "Host Info": "J274_14.4.1_16G_256G",
-    "Cable Info": "Spartan-FW: 1.11.3",
-    "DUT Model": "Zonda (P1BU) 48GB_2T",
-    "Variant": "Factory-Software Download",
-    "Bundle Version": "CheerEAmber25E40600u",
-    "Loop #": "19",
-    "Restore Status": "0/19T",
-    "Folder Name": "/Users/sw-team/Desktop/0820/",
-    "Median Times(s)": "2644.51",
-    "Avg Time(s)": "2644.54",
-    "Min Time(s)": "2632.75",
-    "Max Time(s)": "2657.33",
-    "Range(s)": "24.58",
-    "Std(s)": "4.67",
-    "Outlier Count": "4",
-    "Remark": "Outliers determined by boxplot method (Q1-1.5IQR, Q3+1.5IQR); Min at loops: 10; Max at loops: 3",
-    "path": {
-      "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-2_line_chart.png",
-      "boxplot": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-2_boxplot.png"
     }
   },
   "note": "Outliers are determined based on the boxplot method, where a data point is considered an outlier if it is greater than Q3 + 1.5×IQR or less than Q1 - 1.5×IQR.",

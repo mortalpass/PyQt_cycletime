@@ -118,7 +118,6 @@ def main():
     try:
         # 从环境变量获取info.json路径，或使用默认路径
         info_path = os.path.join(PROJECT_ROOT, 'info.json')
-        print(info_path)
 
         # 创建元数据生成器
         generator = MetadataGenerator(info_path)
