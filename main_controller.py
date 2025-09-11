@@ -6,14 +6,13 @@ import shutil
 import json
 import re
 from pathlib import Path
-from typing import Dict, Any
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QHBoxLayout,
-                             QWidget, QLabel, QPushButton, QTextEdit, QFileDialog,
+                             QWidget, QLabel, QPushButton, QTextEdit,
                              QProgressBar, QMessageBox, QGroupBox, QTabWidget,
-                             QLineEdit, QFormLayout, QScrollArea, QSplitter, QFrame,
-                             QDialog, QDialogButtonBox, QSpinBox, QComboBox)
+                             QLineEdit, QFormLayout,
+                             QDialog)
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QFont
+from PyQt5.QtGui import QFont
 
 # 配置日志
 logging.basicConfig(
@@ -366,6 +365,7 @@ class ScriptRunnerThread(QThread):
                 shutil.rmtree(extracted_dir)
             extracted_dir.mkdir(parents=True, exist_ok=True)
 
+            # 清空 data 文件夹
             data_dir = Path("data")
             if data_dir.exists():
                 shutil.rmtree(data_dir)

@@ -52,16 +52,14 @@ class MetadataGenerator:
         if "metadata_dict" in info_data:
             metadata["metadata_dict"] = info_data["metadata_dict"]
 
-            # 确保Test Date字段是完整的时间格式
-            if "Test Date" in metadata["metadata_dict"]:
-                test_date = metadata["metadata_dict"]["Test Date"]
-                if len(test_date) == 10:  # 只有日期部分
-                    metadata["metadata_dict"]["Test Date"] = f"{test_date} 00:00:00"
-
         # 处理每个工作站
         workstation_keys = [key for key in info_data.keys() if key.startswith("WS-")]
         for ws_key in workstation_keys:
-            metadata[ws_key] = info_data[ws_key].copy()
+            ws_data = info_data[ws_key].copy()
+            if "Folder Name" in ws_data:
+                del ws_data["Folder Name"]
+
+            metadata[ws_key] = ws_data
 
             # 添加统计字段（初始为空）
             metadata[ws_key]["Median Times(s)"] = ""
