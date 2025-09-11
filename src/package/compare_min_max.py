@@ -94,7 +94,7 @@ class CSVComparator:
             return pd.Series(dtype=object)
 
     def parse_index_file(self, txt_path: Path) -> Dict[str, Dict[str, List[str]]]:
-        """从txt文件中解析min、max和abnormal索引，按工作站名称分组"""
+        """从txt文件中解析min、max、median和abnormal索引，按工作站名称分组"""
         index_dict = {}
 
         if not txt_path.exists():
@@ -118,9 +118,9 @@ class CSVComparator:
                     value = parts[2].strip()
 
                     if workstation_name not in index_dict:
-                        index_dict[workstation_name] = {'min': [], 'max': [], 'abnormal': []}
+                        index_dict[workstation_name] = {'min': [], 'max': [], 'median': [], 'abnormal': []}
 
-                    if key in ['min', 'max', 'abnormal']:
+                    if key in ['min', 'max', 'median', 'abnormal']:
                         index_dict[workstation_name][key].append(value)
 
         except Exception as e:
@@ -152,6 +152,7 @@ class CSVComparator:
             self,
             min_files: List[Tuple[str, Path]],
             max_files: List[Tuple[str, Path]],
+            median_files: List[Tuple[str, Path]],
             abnormal_files: List[Tuple[str, Path]],
             workstation_name: str
     ) -> Path:
@@ -159,8 +160,19 @@ class CSVComparator:
         # 合并所有数据
         all_data = {}
 
-        # 提取abnormal索引用于检查min和max索引是否与其相同
+        # 提取abnormal索引用于检查min、max和median索引是否与其相同
         abnormal_indices = {index for index, _ in abnormal_files}
+
+        # 添加median数据 - 如果索引与abnormal相同，则修改列名
+        for index, file_path in median_files:
+            data = self.parse_file(file_path)
+            if not data.empty:
+                ordinal_index = self.get_ordinal_suffix(index)
+                if index in abnormal_indices:
+                    # 如果median索引与abnormal相同，添加_abnormal后缀
+                    all_data[f"Median_abnormal({ordinal_index} loop)"] = data
+                else:
+                    all_data[f"Median({ordinal_index} loop)"] = data
 
         # 添加max数据 - 如果索引与abnormal相同，则修改列名
         for index, file_path in max_files:
@@ -184,10 +196,10 @@ class CSVComparator:
                 else:
                     all_data[f"Min({ordinal_index} loop)"] = data
 
-        # 添加abnormal数据 - 只添加不在min和max中的abnormal索引
-        min_max_indices = {index for index, _ in min_files} | {index for index, _ in max_files}
+        # 添加abnormal数据 - 只添加不在min、max和median中的abnormal索引
+        min_max_median_indices = {index for index, _ in min_files} | {index for index, _ in max_files} | {index for index, _ in median_files}
         for index, file_path in abnormal_files:
-            if index not in min_max_indices:  # 只添加独有的abnormal索引
+            if index not in min_max_median_indices:  # 只添加独有的abnormal索引
                 data = self.parse_file(file_path)
                 if not data.empty:
                     ordinal_index = self.get_ordinal_suffix(index)
@@ -214,6 +226,37 @@ class CSVComparator:
 
             # 计算时间差并保留四位小数
             result['Time_Difference(Max-Min)'] = (result[max_col] - result[min_col]).round(4)
+
+        # 计算每个abnormal列与median列的时间差
+        # 找到第一个median列作为基准
+        median_cols = [col for col in result.columns if col.startswith('Median')]
+        if median_cols:
+            median_col = median_cols[0]  # 使用第一个median列作为基准
+
+            # 确保median列是数值类型
+            result[median_col] = pd.to_numeric(result[median_col], errors='coerce')
+
+            # 为每个abnormal列计算与median的差值
+            abnormal_cols = [col for col in result.columns if col.startswith('Abnormal')]
+            for abnormal_col in abnormal_cols:
+                # 确保abnormal列是数值类型
+                result[abnormal_col] = pd.to_numeric(result[abnormal_col], errors='coerce')
+
+                # 计算差值
+                diff_col_name = f"Time_Difference({abnormal_col}-Median)"
+                result[diff_col_name] = (result[abnormal_col] - result[median_col]).round(4)
+
+        # 计算max与median的时间差
+        if max_cols and median_cols:
+            max_col = max_cols[0]  # 使用第一个max列
+            result[max_col] = pd.to_numeric(result[max_col], errors='coerce')
+            result['Time_Difference(Max-Median)'] = (result[max_col] - result[median_col]).round(4)
+
+        # 计算min与median的时间差
+        if min_cols and median_cols:
+            min_col = min_cols[0]  # 使用第一个min列
+            result[min_col] = pd.to_numeric(result[min_col], errors='coerce')
+            result['Time_Difference(Min-Median)'] = (result[min_col] - result[median_col]).round(4)
 
         # 删除第一行（如果有"Log Folder Path"）
         if not result.empty and result.iloc[0]['Stage'] == 'Log Folder Path':
@@ -247,10 +290,12 @@ class CSVComparator:
             # 获取索引值
             min_indices = indices.get('min', [])
             max_indices = indices.get('max', [])
+            median_indices = indices.get('median', [])
             abnormal_indices = indices.get('abnormal', [])
 
             logger.info(f"Min 索引: {min_indices}")
             logger.info(f"Max 索引: {max_indices}")
+            logger.info(f"Median 索引: {median_indices}")
             logger.info(f"Abnormal 索引: {abnormal_indices}")
 
             # 查找对应的文件
@@ -266,18 +311,25 @@ class CSVComparator:
                 if file_path:
                     max_files.append((index, file_path))
 
+            median_files = []
+            for index in median_indices:
+                file_path = self.find_cycle_file(workstation_name, index)
+                if file_path:
+                    median_files.append((index, file_path))
+
             abnormal_files = []
             for index in abnormal_indices:
                 file_path = self.find_cycle_file(workstation_name, index)
                 if file_path:
                     abnormal_files.append((index, file_path))
 
-            if not min_files and not max_files and not abnormal_files:
+            # 检查是否有任何文件
+            if not min_files and not max_files and not median_files and not abnormal_files:
                 logger.warning(f"未找到任何文件，跳过 {workstation_name}")
                 continue
 
             # 处理文件比较
-            self.process_comparison(min_files, max_files, abnormal_files, workstation_name)
+            self.process_comparison(min_files, max_files, median_files, abnormal_files, workstation_name)
 
 
 def main():

@@ -250,7 +250,7 @@ class ExcelExporter:
 
     def _apply_excel_formatting(self, excel_path: Path) -> None:
         """
-        应用Excel格式设置：标记时间差大于1的单元格并调整列宽
+        应用Excel格式设置：标记所有时间差大于1的单元格并调整列宽
 
         参数:
             excel_path: Excel文件路径
@@ -267,18 +267,19 @@ class ExcelExporter:
                 for row in range(1, ws.max_row + 1):
                     ws.row_dimensions[row].height = 22
 
-                # 如果不是Metadata工作表，查找Time_Difference列
+                # 如果不是Metadata工作表，查找所有Time_Difference列
                 if sheet_name != "Metadata":
-                    time_diff_col = self._find_column_index(ws, "Time_Difference")
+                    # 查找所有包含"Time_Difference"的列
+                    time_diff_cols = self._find_all_column_indices(ws, "Time_Difference")
 
-                    if time_diff_col:
+                    for col_idx in time_diff_cols:
                         # 设置标题格式
-                        header_cell = ws.cell(row=1, column=time_diff_col)
+                        header_cell = ws.cell(row=1, column=col_idx)
                         header_cell.font = self.BOLD_CAMBRIA_FONT
                         header_cell.alignment = self.CENTER_ALIGNMENT
 
                         # 标记大于1的单元格
-                        self._highlight_cells_above_threshold(ws, time_diff_col, 1.0)
+                        self._highlight_cells_above_threshold(ws, col_idx, 1.0)
 
                 # 设置所有单元格的字体和居中对齐
                 for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
@@ -305,6 +306,15 @@ class ExcelExporter:
             if cell_value and column_name.lower() in str(cell_value).lower():
                 return col_idx
         return None
+
+    def _find_all_column_indices(self, worksheet, column_name: str) -> List[int]:
+        """查找所有包含指定列名的列索引"""
+        indices = []
+        for col_idx in range(1, worksheet.max_column + 1):
+            cell_value = worksheet.cell(row=1, column=col_idx).value
+            if cell_value and column_name.lower() in str(cell_value).lower():
+                indices.append(col_idx)
+        return indices
 
     def _highlight_cells_above_threshold(self, worksheet, column_index: int, threshold: float) -> None:
         """标记大于阈值的单元格"""
