@@ -250,7 +250,7 @@ class ExcelExporter:
 
     def _apply_excel_formatting(self, excel_path: Path) -> None:
         """
-        应用Excel格式设置：标记所有时间差大于1的单元格并调整列宽
+        应用Excel格式设置：标记所有时间差绝对值大于1的单元格并调整列宽
 
         参数:
             excel_path: Excel文件路径
@@ -278,7 +278,7 @@ class ExcelExporter:
                         header_cell.font = self.BOLD_CAMBRIA_FONT
                         header_cell.alignment = self.CENTER_ALIGNMENT
 
-                        # 标记大于1的单元格
+                        # 标记绝对值大于1的单元格
                         self._highlight_cells_above_threshold(ws, col_idx, 1.0)
 
                 # 设置所有单元格的字体和居中对齐
@@ -317,12 +317,14 @@ class ExcelExporter:
         return indices
 
     def _highlight_cells_above_threshold(self, worksheet, column_index: int, threshold: float) -> None:
-        """标记大于阈值的单元格"""
+        """标记绝对值大于阈值的单元格"""
         for row in range(2, worksheet.max_row + 1):
             cell = worksheet.cell(row=row, column=column_index)
             try:
-                if cell.value and float(cell.value) > threshold:
-                    cell.fill = self.RED_FILL
+                if cell.value is not None:
+                    cell_value = float(cell.value)
+                    if abs(cell_value) > threshold:
+                        cell.fill = self.RED_FILL
             except (ValueError, TypeError):
                 # 忽略无法转换为浮点数的单元格
                 continue
