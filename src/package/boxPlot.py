@@ -37,6 +37,8 @@ class BoxPlotGenerator:
         self.single_boxplot_paths = []
         # 存储多数据集箱线图路径
         self.multi_boxplot_path = None
+        # 存储异常点信息
+        self.outliers_info = {}
 
     def load_workstation_data(self) -> Dict[str, List[float]]:
         """加载工作站数据"""
@@ -167,6 +169,9 @@ class BoxPlotGenerator:
         # 保存重要索引
         outlier_indices_list = [idx for idx, _ in outliers]
         self.save_important_indices(workstation_name, median_index, outlier_indices_list)
+
+        # 保存异常点信息
+        self.outliers_info[workstation_name] = [{"index": idx, "value": val} for idx, val in outliers]
 
         # 创建图表
         plt.figure(figsize=(10, 7))
@@ -310,7 +315,7 @@ class BoxPlotGenerator:
         return filename
 
     def update_metadata_json(self):
-        """将箱线图路径写入metadata.json文件"""
+        """将箱线图路径和异常点信息写入metadata.json文件"""
         try:
             # 使用config.py中的output_form路径构建metadata.json的完整路径
             metadata_path = Path(output_form) / 'metadata.json'
@@ -326,27 +331,29 @@ class BoxPlotGenerator:
                 logger.error("metadata.json文件不存在，无法更新")
                 return
 
-            # 获取当前工作站名称
-            workstation_name = os.environ.get('WORKSTATION_NAME')
-            if not workstation_name:
-                logger.error("未设置环境变量 WORKSTATION_NAME")
-                return
+            # 更新所有工作站的箱线图路径和异常点信息
+            for workstation_name in self.outliers_info:
+                if workstation_name in metadata:
+                    # 确保path字段存在
+                    if "path" not in metadata[workstation_name]:
+                        metadata[workstation_name]["path"] = {}
 
-            # 更新当前工作站的箱线图路径
-            if workstation_name in metadata:
-                # 确保path字段存在
-                if "path" not in metadata[workstation_name]:
-                    metadata[workstation_name]["path"] = {}
+                    # 设置单数据集箱线图路径
+                    if self.single_boxplot_paths:
+                        # 找到对应工作站的箱线图路径
+                        safe_name = re.sub(r'[^\w\-]', '_', workstation_name)
+                        boxplot_path = next((path for path in self.single_boxplot_paths if safe_name in path), "")
+                        if boxplot_path:
+                            metadata[workstation_name]["path"]["boxplot"] = boxplot_path
 
-                # 设置单数据集箱线图路径
-                if self.single_boxplot_paths:
-                    metadata[workstation_name]["path"]["boxplot"] = self.single_boxplot_paths[0]
+                    # 设置异常点信息
+                    metadata[workstation_name]["Outlier Point"] = self.outliers_info[workstation_name]
 
             # 写回文件
             with open(metadata_path, 'w', encoding='utf-8') as f:
                 json.dump(metadata, f, indent=2, ensure_ascii=False)
 
-            logger.info(f"已更新metadata.json中的箱线图路径: {metadata_path}")
+            logger.info(f"已更新metadata.json中的箱线图路径和异常点信息: {metadata_path}")
 
         except Exception as e:
             logger.error(f"更新metadata.json时出错: {e}")
@@ -358,6 +365,8 @@ class BoxPlotGenerator:
         # 重置图表路径列表
         self.single_boxplot_paths = []
         self.multi_boxplot_path = None
+        # 重置异常点信息
+        self.outliers_info = {}
 
         # 加载工作站数据
         workstation_data = self.load_workstation_data()

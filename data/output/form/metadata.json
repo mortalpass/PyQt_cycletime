@@ -24,6 +24,28 @@
     "Range(s)": "257.36",
     "Std(s)": "22.83",
     "Outlier Count": "5",
+    "Outlier Point": [
+      {
+        "index": 2,
+        "value": 2885.23
+      },
+      {
+        "index": 5,
+        "value": 2765.557
+      },
+      {
+        "index": 36,
+        "value": 2713.744
+      },
+      {
+        "index": 46,
+        "value": 2660.505
+      },
+      {
+        "index": 52,
+        "value": 2627.869
+      }
+    ],
     "Remark": "Outliers determined by boxplot method (Q1-1.5IQR, Q3+1.5IQR); Min at loops: 52; Max at loops: 2",
     "path": {
       "linechart": "/Users/sw-team/Desktop/Pyqt5_cycletime/data/output/img/WS-1_line_chart.png",

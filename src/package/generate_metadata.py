@@ -69,6 +69,7 @@ class MetadataGenerator:
             metadata[ws_key]["Range(s)"] = ""
             metadata[ws_key]["Std(s)"] = ""
             metadata[ws_key]["Outlier Count"] = ""
+            metadata[ws_key]["Outlier Point"] = []
             metadata[ws_key]["Remark"] = ""
 
             # 添加路径字段
